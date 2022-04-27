@@ -10,6 +10,44 @@
 
 NORI_NAMESPACE_BEGIN
 
+
+
+    struct AccelNode {
+        virtual ~AccelNode() = default;
+        virtual bool rayTraversal(Ray3f &ray_, Intersection &its, bool shadowRay, const Mesh * meshset) const = 0;
+    };
+
+/**
+ * @brief
+ * The node for an Octree
+ */
+    constexpr int nSubs = 8;
+    constexpr int ocLeafMaxSize = 10;
+    struct OcNode : public AccelNode {
+        // the cube of the node
+        BoundingBox3f nodeBox;
+
+        // alway nullptr when interior
+        std::unique_ptr<std::vector<uint32_t>> indexBufPtr {nullptr};
+
+        // alway nullptr when leaf
+        OcNode *subNodes[nSubs] {nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr};
+
+        OcNode(const BoundingBox3f &_nodeBox) : nodeBox(_nodeBox) { }
+
+        OcNode(const BoundingBox3f &_nodeBox, const std::vector<uint32_t> &indexBuf)
+                :nodeBox(_nodeBox), indexBufPtr(std::make_unique<std::vector<uint32_t>>(indexBuf)) { }
+
+        virtual ~OcNode() {
+            for (int i = 0; i < nSubs; ++i)
+                delete subNodes[i];
+        }
+
+        std::vector<BoundingBox3f> getSubBBoxes();
+
+        virtual bool rayTraversal( Ray3f &ray_, Intersection &its, bool shadowRay, const Mesh * mesh ) const ;
+    };
+
 /**
  * \brief Acceleration data structure for ray intersection queries
  *
@@ -18,6 +56,7 @@ NORI_NAMESPACE_BEGIN
  */
 class Accel {
 public:
+
     /**
      * \brief Register a triangle mesh for inclusion in the acceleration
      * data structure
@@ -56,6 +95,12 @@ public:
 private:
     Mesh         *m_mesh = nullptr; ///< Mesh (only a single one for now)
     BoundingBox3f m_bbox;           ///< Bounding box of the entire scene
+    OcNode *buildOcTree(const BoundingBox3f &box, const std::vector<uint32_t> &indexBuf);
+    OcNode * m_root;
 };
 
+
+class Node{
+
+};
 NORI_NAMESPACE_END

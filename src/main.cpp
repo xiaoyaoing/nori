@@ -88,7 +88,7 @@ static void render(Scene *scene, const std::string &filename) {
             /* Allocate memory for a small image block to be rendered
                by the current thread */
             ImageBlock block(Vector2i(NORI_BLOCK_SIZE),
-                camera->getReconstructionFilter());
+                             camera->getReconstructionFilter());
 
             /* Create a clone of the sampler for the current thread */
             std::unique_ptr<Sampler> sampler(scene->getSampler()->clone());
@@ -148,14 +148,18 @@ static void render(Scene *scene, const std::string &filename) {
 }
 
 int main(int argc, char **argv) {
-    if (argc < 2) {
-        cerr << "Syntax: " << argv[0] << " <scene.xml> [--no-gui] [--threads N]" <<  endl;
-        return -1;
-    }
+//    if (argc < 2) {
+//        cerr << "Syntax: " << argv[0] << " <scene.xml> [--no-gui] [--threads N]" <<  endl;
+//        return -1;
+//    }
 
     std::string sceneName = "";
     std::string exrName = "";
 
+    argv=new char*[2];
+    argc=2;
+    argv[1]="../scenes/pa2/ajax-normals.xml";
+    std::string  s=argv[1];
     for (int i = 1; i < argc; ++i) {
         std::string token(argv[i]);
         if (token == "-t" || token == "--threads") {

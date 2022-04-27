@@ -48,7 +48,7 @@ if (CMAKE_CXX_COMPILER_ID MATCHES "Clang" OR CMAKE_CXX_COMPILER_ID MATCHES "GNU"
     message(FATAL_ERROR "Unsupported compiler -- Nori requires C++11 support!")
   endif()
 
-  # Prefer libc++ in conjunction with Clang
+  #gi Prefer libc++ in conjunction with Clang
   if (CMAKE_CXX_COMPILER_ID MATCHES "Clang")
     CHECK_CXX_COMPILER_FLAG("-stdlib=libc++" HAS_LIBCPP)
     if (HAS_LIBCPP)

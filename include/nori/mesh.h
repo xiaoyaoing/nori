@@ -49,6 +49,8 @@ struct Intersection {
 
     /// Return a human-readable summary of the intersection record
     std::string toString() const;
+
+    uint32_t f;
 };
 
 /**
