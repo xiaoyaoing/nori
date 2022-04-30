@@ -158,7 +158,7 @@ int main(int argc, char **argv) {
 
     argv=new char*[2];
     argc=2;
-    argv[1]="../scenes/pa2/ajax-normals.xml";
+    argv[1]="../scenes/pa4/cbox/cbox-whitted.xml";
     std::string  s=argv[1];
     for (int i = 1; i < argc; ++i) {
         std::string token(argv[i]);

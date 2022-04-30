@@ -45,7 +45,7 @@ NORI_NAMESPACE_BEGIN
 
         std::vector<BoundingBox3f> getSubBBoxes();
 
-        virtual bool rayTraversal( Ray3f &ray_, Intersection &its, bool shadowRay, const Mesh * mesh ) const ;
+        virtual bool rayTraversal( Ray3f &ray_, Intersection &its, bool shadowRay, const MeshSet * mesh ) const ;
     };
 
 /**

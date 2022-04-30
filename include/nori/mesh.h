@@ -9,6 +9,7 @@
 #include <nori/object.h>
 #include <nori/frame.h>
 #include <nori/bbox.h>
+#include "dpdf.h"
 
 NORI_NAMESPACE_BEGIN
 
@@ -63,6 +64,9 @@ struct Intersection {
  */
 class Mesh : public NoriObject {
 public:
+
+    Point3f sample(Vector3f & normal,float & density,Sampler *sampler);
+
     /// Release all memory
     virtual ~Mesh();
 
@@ -158,6 +162,8 @@ protected:
     Mesh();
 
 protected:
+    DiscretePDF  dPdf;                   ///Assignement 4.1
+    float        allSurfaceArea;         /// surfaceArea
     std::string m_name;                  ///< Identifying name
     MatrixXf      m_V;                   ///< Vertex positions
     MatrixXf      m_N;                   ///< Vertex normals
@@ -167,5 +173,10 @@ protected:
     Emitter    *m_emitter = nullptr;     ///< Associated emitter, if any
     BoundingBox3f m_bbox;                ///< Bounding box of the mesh
 };
+
+struct  MeshSet{
+        std::vector<Mesh *> m_meshSet;
+
+    };
 
 NORI_NAMESPACE_END

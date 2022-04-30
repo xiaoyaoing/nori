@@ -11,8 +11,8 @@ NORI_NAMESPACE_BEGIN
 
     int searchCount=0;
     void Accel::addMesh(Mesh *mesh) {
-        if (m_mesh)
-            throw NoriException("Accel: only a single mesh is supported!");
+//        if (m_mesh)
+//            throw NoriException("Accel: only a single mesh is supported!");
         m_mesh = mesh;
         m_bbox = m_mesh->getBoundingBox();
     }
@@ -51,9 +51,9 @@ NORI_NAMESPACE_BEGIN
 //            foundIntersection = true;
 //        }
 //    }
-        foundIntersection = m_root->rayTraversal(ray, its, shadowRay, m_mesh);
+        foundIntersection = m_root->rayTraversal(ray, its, shadowRay, m_meshSet);
         auto  f=its.f;
-//    if (shadowRay && foundIntersection)  return true;
+        if (shadowRay && foundIntersection)  return true;
         if (foundIntersection) {
             /* At this point, we now know that there is an intersection,
                and we know the triangle index of the closest such intersection.
@@ -64,7 +64,6 @@ NORI_NAMESPACE_BEGIN
             /* Find the barycentric coordinates */
             Vector3f bary;
             bary << 1-its.uv.sum(), its.uv;
-
             /* References to all relevant mesh buffers */
             const Mesh *mesh   = its.mesh;
             const MatrixXf &V  = mesh->getVertexPositions();
@@ -164,7 +163,7 @@ NORI_NAMESPACE_BEGIN
         return subBoxes;
     }
 
-    bool OcNode::rayTraversal( Ray3f &ray_, Intersection &its, bool shadowRay, const Mesh *mesh) const {
+    bool OcNode::rayTraversal( Ray3f &ray_, Intersection &its, bool shadowRay, const MeshSet *mesh) const {
 
         if(!nodeBox.rayIntersect(ray_))
             return false;

@@ -26,6 +26,10 @@ void Mesh::activate() {
         m_bsdf = static_cast<BSDF *>(
             NoriObjectFactory::createInstance("diffuse", PropertyList()));
     }
+    for(size_t i=0;i<getTriangleCount();i++){
+        dPdf.append(this->surfaceArea(i));
+    }
+    this->allSurfaceArea=dPdf.normalize();
 }
 
 float Mesh::surfaceArea(uint32_t index) const {
@@ -130,7 +134,22 @@ std::string Mesh::toString() const {
     );
 }
 
-std::string Intersection::toString() const {
+    Point3f Mesh::sample(Vector3f &normal, float &density, Sampler * sampler) {
+        uint32_t index=dPdf.sample(sampler->next1D());
+        uint32_t i0 = m_F(0, index), i1 = m_F(1, index), i2 = m_F(2, index);
+        const Point3f p0 = m_V.col(i0), p1 = m_V.col(i1), p2 = m_V.col(i2);
+
+        normal=(p1-p0).cross(p2-p1);
+        normal.normalize();
+
+        density=1/allSurfaceArea;
+
+        auto bary=sampler->next2D();
+        float u=1- sqrt(1-bary.x()),v=bary.y() * sqrt(1-bary.x());
+        return p0*(1-u-v) + p1 * u + p2 * v;
+    }
+
+    std::string Intersection::toString() const {
     if (!mesh)
         return "Intersection[invalid]";
 
@@ -151,5 +170,7 @@ std::string Intersection::toString() const {
         mesh ? mesh->toString() : std::string("null")
     );
 }
+
+
 
 NORI_NAMESPACE_END
