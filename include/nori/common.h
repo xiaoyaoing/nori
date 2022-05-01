@@ -120,8 +120,10 @@ class NoriObjectFactory;
 class NoriScreen;
 class PhaseFunction;
 class ReconstructionFilter;
+class Intersection;
 class Sampler;
 class Scene;
+class emitterRecord;
 
 /// Import cout, cerr, endl for debugging purposes
 using std::cout;

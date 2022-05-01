@@ -14,7 +14,7 @@ NORI_NAMESPACE_BEGIN
 
     struct AccelNode {
         virtual ~AccelNode() = default;
-        virtual bool rayTraversal(Ray3f &ray_, Intersection &its, bool shadowRay, const Mesh * meshset) const = 0;
+        virtual bool rayTraversal(Ray3f &ray_, Intersection &its, bool shadowRay, const MeshSet * meshset) const = 0;
     };
 
 /**
@@ -92,8 +92,9 @@ public:
      */
     bool rayIntersect(const Ray3f &ray, Intersection &its, bool shadowRay) const;
 
+    MeshSet * m_MeshSet;
 private:
-    Mesh         *m_mesh = nullptr; ///< Mesh (only a single one for now)
+    ///< Mesh (only a single one for now)
     BoundingBox3f m_bbox;           ///< Bounding box of the entire scene
     OcNode *buildOcTree(const BoundingBox3f &box, const std::vector<uint32_t> &indexBuf);
     OcNode * m_root;

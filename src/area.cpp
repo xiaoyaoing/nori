@@ -12,8 +12,14 @@ public:
         return "AreaLight";
     }
 
+    Color3f eval(emitterRecord eRec) const override {
+          return radiance;
+//        return Emitter::eval(intersection);
+    }
 
-
+    Color3f eval(Intersection its)const override{
+        return radiance;
+    }
     AreaLight(const PropertyList list) {
         this->radiance=list.getColor("radiance");
     }

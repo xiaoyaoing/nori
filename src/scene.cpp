@@ -15,6 +15,7 @@ NORI_NAMESPACE_BEGIN
 
 Scene::Scene(const PropertyList &) {
     m_accel = new Accel();
+    m_accel->m_MeshSet=&m_meshes;
 }
 
 Scene::~Scene() {
@@ -48,13 +49,13 @@ void Scene::addChild(NoriObject *obj) {
         case EMesh: {
                 Mesh *mesh = static_cast<Mesh *>(obj);
                 m_accel->addMesh(mesh);
-                m_meshes.push_back(mesh);
             }
             break;
         
         case EEmitter: {
                 //Emitter *emitter = static_cast<Emitter *>(obj);
                 /* TBD */
+
                 throw NoriException("Scene::addChild(): You need to implement this for emitters");
             }
             break;
@@ -85,9 +86,9 @@ void Scene::addChild(NoriObject *obj) {
 
 std::string Scene::toString() const {
     std::string meshes;
-    for (size_t i=0; i<m_meshes.size(); ++i) {
-        meshes += std::string("  ") + indent(m_meshes[i]->toString(), 2);
-        if (i + 1 < m_meshes.size())
+    for (size_t i=0; i<m_meshes.meshesPtr->size(); ++i) {
+        meshes += std::string("  ") + indent( (*m_meshes.meshesPtr)[i]->toString(), 2);
+        if (i + 1 < m_meshes.meshesPtr->size())
             meshes += ",";
         meshes += "\n";
     }
@@ -107,5 +108,13 @@ std::string Scene::toString() const {
     );
 }
 
-NORI_REGISTER_CLASS(Scene, "scene");
+
+
+//void Scene::sampleEmitter(emitterRecord &record, Sampler *sampler) const {
+//        m_meshes.sampleLight(record,sampler);
+//    }
+
+
+    NORI_REGISTER_CLASS(Scene, "scene");
 NORI_NAMESPACE_END
+

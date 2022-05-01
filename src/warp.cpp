@@ -81,7 +81,7 @@ float Warp::squareToCosineHemispherePdf(const Vector3f &v) {
 }
 
 Vector3f Warp::squareToBeckmann(const Point2f &sample, float alpha) {
-    auto tan2theta= -alpha*alpha*log( 1-sample.x() );
+    auto tan2theta= -alpha*alpha*log( sample.x() );
     auto cosTheta=sqrt(1/(1+tan2theta));
     auto sinTheta= sqrt(1-cosTheta*cosTheta);
     auto phi=sample.y() * 2 * M_PI;

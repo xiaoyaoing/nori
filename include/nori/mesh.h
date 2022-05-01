@@ -10,6 +10,7 @@
 #include <nori/frame.h>
 #include <nori/bbox.h>
 #include "dpdf.h"
+#include "emitter.h"
 
 NORI_NAMESPACE_BEGIN
 
@@ -65,7 +66,7 @@ struct Intersection {
 class Mesh : public NoriObject {
 public:
 
-    Point3f sample(Vector3f & normal,float & density,Sampler *sampler);
+    void sample(emitterRecord & rec, Sampler * sampler,float weight);
 
     /// Release all memory
     virtual ~Mesh();
@@ -157,6 +158,10 @@ public:
      * */
     EClassType getClassType() const { return EMesh; }
 
+    float getAllSurfaceArea() const {
+        return allSurfaceArea;
+    }
+
 protected:
     /// Create an empty mesh
     Mesh();
@@ -174,9 +179,55 @@ protected:
     BoundingBox3f m_bbox;                ///< Bounding box of the mesh
 };
 
-struct  MeshSet{
-        std::vector<Mesh *> m_meshSet;
+    struct MeshSet {
+        std::unique_ptr<std::vector<Mesh *>> meshesPtr {nullptr};
+        std::unique_ptr<std::vector<Mesh *>> emitterPtr {nullptr};
+        std::vector<uint32_t> count;
+        DiscretePDF emitterPdf;
 
+        MeshSet(): meshesPtr(std::make_unique<std::vector<Mesh *>>()),
+                   emitterPtr(std::make_unique<std::vector<Mesh *>>())
+        { }
+
+        //MeshSet(std::vector<Mesh> &_meshes) {
+        //    meshesPtr = std::make_unique<std::vector<Mesh>>(_meshes);
+        //    for (const auto &mesh : *meshesPtr) {
+        //        if (count.empty())
+        //            count.emplace_back(mesh.getTriangleCount());
+        //        else count.emplace_back(mesh.getTriangleCount() + count.back());
+        //    }
+        //}
+
+        void addMesh(Mesh *mesh) ;
+
+        uint32_t getSize() const {
+            return count.back();
+        }
+
+        decltype(auto) getTri(uint32_t idx) const {
+            auto cmp = [&idx](uint32_t f) {
+                return f > idx;
+            };
+            const auto &entry = std::find_if(count.begin(), count.end(), cmp);
+            uint32_t meshIdx = entry - count.begin();
+            uint32_t triIdx = idx;
+            if (meshIdx > 0)
+                triIdx -= count[meshIdx - 1];
+            return std::pair<uint32_t, uint32_t> {meshIdx, triIdx};
+        }
+
+        Mesh* getMesh(uint32_t idx) const {
+            uint32_t meshIdx = getTri(idx).first;
+            return (*meshesPtr)[meshIdx];
+        }
+
+        BoundingBox3f getBoundingBox(uint32_t idx) const;
+
+        bool rayIntersect (uint32_t index, const Ray3f &ray, float &u, float &v, float &t) const;
+
+        bool isInBox (uint32_t idx, const BoundingBox3f &box) const;
+
+        void sampleLight(emitterRecord &eRec,Sampler * sampler) const;
     };
 
 NORI_NAMESPACE_END

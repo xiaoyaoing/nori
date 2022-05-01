@@ -158,7 +158,10 @@ int main(int argc, char **argv) {
 
     argv=new char*[2];
     argc=2;
+    argv[1]="../scenes/pa1/bunny.xml";
+    argv[1]="../scenes/pa4/tests/test-mesh.xml";
     argv[1]="../scenes/pa4/cbox/cbox-whitted.xml";
+    argv[1]="../scenes/pa5/tests/ttest-microfacet.xml";
     std::string  s=argv[1];
     for (int i = 1; i < argc; ++i) {
         std::string token(argv[i]);

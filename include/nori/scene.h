@@ -7,6 +7,7 @@
 #pragma once
 
 #include <nori/accel.h>
+#include "emitter.h"
 
 NORI_NAMESPACE_BEGIN
 
@@ -44,7 +45,7 @@ public:
     Sampler *getSampler() { return m_sampler; }
 
     /// Return a reference to an array containing all meshes
-    const std::vector<Mesh *> &getMeshes() const { return m_meshes; }
+    const MeshSet &getMeshes() const { return m_meshes; }
 
     /**
      * \brief Intersect a ray against all triangles stored in the scene
@@ -104,8 +105,13 @@ public:
     std::string toString() const;
 
     EClassType getClassType() const { return EScene; }
+
+    void sampleEmitter(emitterRecord &  record,Sampler * sampler) const {
+        m_meshes.sampleLight(record,sampler);
+    }
+
 private:
-    std::vector<Mesh *> m_meshes;
+    MeshSet m_meshes;
     Integrator *m_integrator = nullptr;
     Sampler *m_sampler = nullptr;
     Camera *m_camera = nullptr;

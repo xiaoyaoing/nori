@@ -11,16 +11,14 @@ NORI_NAMESPACE_BEGIN
 
     int searchCount=0;
     void Accel::addMesh(Mesh *mesh) {
-//        if (m_mesh)
-//            throw NoriException("Accel: only a single mesh is supported!");
-        m_mesh = mesh;
-        m_bbox = m_mesh->getBoundingBox();
+        m_MeshSet->addMesh(mesh);
+        m_bbox.expandBy(mesh->getBoundingBox());
     }
 
     void Accel::build() {
         searchCount=0;
         std::vector<uint32_t> indexBuf;
-        for (uint32_t i = (uint32_t) 0; i < m_mesh->getTriangleCount(); ++i)
+        for (uint32_t i = (uint32_t) 0; i < m_MeshSet->getSize(); ++i)
             indexBuf.emplace_back(i);
         std::cout << "Start build OcTree" << std::endl;
         m_root = buildOcTree(m_bbox, indexBuf);
@@ -51,8 +49,8 @@ NORI_NAMESPACE_BEGIN
 //            foundIntersection = true;
 //        }
 //    }
-        foundIntersection = m_root->rayTraversal(ray, its, shadowRay, m_meshSet);
-        auto  f=its.f;
+        foundIntersection = m_root->rayTraversal(ray, its, shadowRay, m_MeshSet);
+        auto  f=m_MeshSet->getTri(its.f).second;
         if (shadowRay && foundIntersection)  return true;
         if (foundIntersection) {
             /* At this point, we now know that there is an intersection,
@@ -169,7 +167,6 @@ NORI_NAMESPACE_BEGIN
             return false;
         searchCount++;
         if(indexBufPtr){
-
             bool foundIntersetcion= false;
             for (const auto &index : *indexBufPtr) {
                 float u, v, t;
@@ -178,7 +175,7 @@ NORI_NAMESPACE_BEGIN
                         return true;
                     ray_.maxt = its.t = t;
                     its.uv = Point2f(u, v);
-                    its.mesh = mesh;
+                    its.mesh = mesh->getMesh(index);
                     its.f=index;
                     foundIntersetcion= true;
 //                    its.f = mesh.getTri(index).first;
@@ -219,7 +216,7 @@ NORI_NAMESPACE_BEGIN
 
         for (const auto &index : indexBuf) {
             //const auto &bbox = m_mesh->getBBoxByTriIndex(index);
-            const auto &bbox = m_mesh->getBoundingBox(index);
+            const auto &bbox = m_MeshSet->getBoundingBox(index);
             for (int i = 0; i < nSubs; ++i) {
                 // if triangle overlaps the sub-node i
                 // add the triangle index into the list[i]
