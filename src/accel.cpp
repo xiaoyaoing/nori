@@ -16,7 +16,7 @@ NORI_NAMESPACE_BEGIN
     }
 
     void Accel::build() {
-        searchCount=0;
+        m_MeshSet->EmitterNormalize();
         std::vector<uint32_t> indexBuf;
         for (uint32_t i = (uint32_t) 0; i < m_MeshSet->getSize(); ++i)
             indexBuf.emplace_back(i);

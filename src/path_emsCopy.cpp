@@ -33,10 +33,8 @@ NORI_NAMESPACE_BEGIN
         }
 
         Color3f Li(const Scene *scene, Sampler *sampler, const Ray3f &ray,int depth=0) const {
-            return  Li(scene,sampler,ray, false);
-        }
 
-        Color3f Li(const Scene *scene, Sampler *sampler, const Ray3f &ray,bool diffuseBounce) const {
+
             Intersection its;
             Ray3f _ray(ray);
             if (!scene->rayIntersect(_ray, its))
@@ -45,28 +43,22 @@ NORI_NAMESPACE_BEGIN
             Point3f shadingPoint = its.p;
             Normal3f shadingPointNormal = its.shFrame.n;
             const BSDF* bsdf = its.mesh->getBSDF();
-            Vector3f wiLocal = its.shFrame.toLocal(-ray.d);
-            BSDFQueryRecord bsdfQueryRecord { wiLocal };
+            BSDFQueryRecord bsdfQ = BSDFQueryRecord(its.toLocal(-ray.d));
+            if(!bsdf->isDiffuse()){
+                if(sampler->next1D()>RussianRoulette)
+                    return {0.0f};
+                Color3f albedo=its.mesh->getBSDF()->sample(bsdfQ, Point2f(drand48(), drand48()));
+                return albedo * Li(scene,sampler, Ray3f(its.p, its.toWorld(bsdfQ.wo))) / RussianRoulette;
+            }
 
-            /***********************************************************/
-            //打中光源并且需要当前是镜面反射才可以加上这项（漫反射在采样光源的时候已经计算过了)
-            /**********************************************************/
-            if (its.mesh->isEmitter() && !diffuseBounce) {
-                
-                L += its.mesh->getEmitter()->eval(its);
+            if(its.mesh->isEmitter()) {
+                if(depth == 0)
+                    return its.mesh->getEmitter()->eval(its);
+                else
+                    return {0.f};
             }
-            
-            /***********************************************************/
-            //间接光照
-            /**********************************************************/
-            if(sampler->next1D()<RussianRoulette){
-                BSDFQueryRecord queryRecord(its.toLocal(-ray.d));
-                Color3f xcolor = its.mesh->getBSDF()->sample(queryRecord, sampler->next2D());
-                if(!xcolor.isZero()) {
-                    Color3f reLix = Li(scene, sampler, Ray3f(its.p, its.toWorld(queryRecord.wo)), bsdf->isDiffuse());
-                    L+= reLix *  xcolor /RussianRoulette;
-                }
-            }
+
+
 
             /***********************************************************/
             // 采样直接光
@@ -92,9 +84,24 @@ NORI_NAMESPACE_BEGIN
                         /(distance* distance)
                         /eRec.pdfVal
                         ;
+                    if(L.x()>0.9 && L.y()>0.9 && L.z()>0.9){
+                        auto s1= tinyformat::format("cosTheta1%f  ",cosTheta1);
+                        auto s2=tinyformat::format("cosTheta2%f  ",cosTheta2);
+                        auto s3=tinyformat::format("PdfVal%f"  ,eRec.pdfVal);
+                        auto s4=tinyformat::format("distance%f  ",distance);
+                        auto s5=tinyformat::format("radiance%f  ",radiance);
+                        auto s6=tinyformat::format("  f%f  ",f);
+                        std::cout<<(s1+s2+s3+s4+s5+s6)<<endl;
+                    }
                 }
             }
-            return L;
+            Color3f albedo = its.mesh->getBSDF()->sample(bsdfQ, Point2f(drand48(), drand48()));
+            if(sampler->next1D()<RussianRoulette)
+            {
+//                L+=albedo * Li(scene, sampler, Ray3f(its.p, its.toWorld((bsdfQ.wo))),depth + 1);
+                return L/RussianRoulette;
+            }
+            return {0.0f};
         }
 
 

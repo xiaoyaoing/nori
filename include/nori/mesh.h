@@ -228,6 +228,11 @@ protected:
         bool isInBox (uint32_t idx, const BoundingBox3f &box) const;
 
         void sampleLight(emitterRecord &eRec,Sampler * sampler) const;
+
+        void EmitterNormalize();
+
+
+        float allSurfaceArea;
     };
 
 NORI_NAMESPACE_END

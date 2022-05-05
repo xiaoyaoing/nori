@@ -26,10 +26,14 @@ void Mesh::activate() {
         m_bsdf = static_cast<BSDF *>(
             NoriObjectFactory::createInstance("diffuse", PropertyList()));
     }
+    if(this->isEmitter())
+    {
     for(size_t i=0;i<getTriangleCount();i++){
         dPdf.append(this->surfaceArea(i));
-    }
-    this->allSurfaceArea=dPdf.normalize();
+        }
+    this->allSurfaceArea=dPdf.normalize();}
+    if(this->isEmitter())
+    std::cout<<"allSurfaceArea"<<allSurfaceArea<<endl;
 }
 
 float Mesh::surfaceArea(uint32_t index) const {
@@ -139,14 +143,23 @@ std::string Mesh::toString() const {
         uint32_t i0 = m_F(0, index), i1 = m_F(1, index), i2 = m_F(2, index);
         const Point3f p0 = m_V.col(i0), p1 = m_V.col(i1), p2 = m_V.col(i2);
 
-        rec.normal=(p1-p0).cross(p2-p1);
-        rec.normal.normalize();
-
-        rec.pdfVal=weight /allSurfaceArea;
-
         auto bary=sampler->next2D();
         float u=1- sqrt(1-bary.x()),v=bary.y() * sqrt(1-bary.x());
         rec.pos=p0*(1-u-v) + p1 * u + p2 * v;
+
+        if(m_N.size()>0){
+            rec.normal=(1-u-v) * m_N.col(i0) + u* m_N.col(i1)+v* m_N.col(i2);
+
+        }
+        else{
+            rec.normal=((p1-p0).cross(p2-p0)).normalized();
+        }
+//
+//        BSDFQueryRecord bRec{rec.wi};
+//        bRec.wo =rec.its->shFrame.toLocal((rec.pos-rec.its->p).normalized());
+//        bRec.measure = ESolidAngle;
+
+//        rec.pdfVal= getEmitter()->pdf(bRec,weight);
 
         rec.emi=m_emitter;
     }
@@ -195,7 +208,6 @@ BoundingBox3f MeshSet::getBoundingBox(uint32_t idx) const {
                 mesh->getEmitter()->setMesh(mesh);
                 emitterPtr->emplace_back(mesh);
                 emitterPdf.append(mesh->getAllSurfaceArea());
-                emitterPdf.normalize();
             }
         }
     }
@@ -203,10 +215,14 @@ BoundingBox3f MeshSet::getBoundingBox(uint32_t idx) const {
 void MeshSet::sampleLight(emitterRecord & eRec,Sampler * sampler) const {
     float pdfVal1;
     int idx=emitterPdf.sample(sampler->next1D(),pdfVal1);
+    eRec.pdfVal=1/this->allSurfaceArea;
     (*emitterPtr)[idx]->sample(eRec,sampler,pdfVal1);
 
 }
 
+void MeshSet::EmitterNormalize() {
+   this->allSurfaceArea= this->emitterPdf.normalize();
+    }
 
 
 NORI_NAMESPACE_END

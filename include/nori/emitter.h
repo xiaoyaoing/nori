@@ -8,6 +8,7 @@
 
 #include <nori/object.h>
 #include "mesh.h"
+#include "bsdf.h"
 
 NORI_NAMESPACE_BEGIN
 
@@ -29,15 +30,25 @@ public:
         this->mesh=mesh;
     }
 
+//    virtual  float pdf(nori::BSDFQueryRecord record, float d)=0;
+
 protected:
     Mesh * mesh;
 };
 
 struct emitterRecord{
+    Vector3f wi;
     Vector3f  normal;
     Vector3f  pos;
     float pdfVal;
     Emitter * emi;
+    Intersection * its;
 };
+
+//struct EmitterQueryRecord{
+//
+//    Vector3f wi;
+//
+//};
 
 NORI_NAMESPACE_END

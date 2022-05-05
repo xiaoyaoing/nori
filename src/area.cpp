@@ -12,6 +12,8 @@ public:
         return "AreaLight";
     }
 
+
+
     Color3f eval(emitterRecord eRec) const override {
           return radiance;
 //        return Emitter::eval(intersection);
@@ -23,6 +25,10 @@ public:
     AreaLight(const PropertyList list) {
         this->radiance=list.getColor("radiance");
     }
+
+//    float pdf(BSDFQueryRecord record, float d) override {
+//
+//    }
 
 private:
     Color3f radiance;

@@ -9,6 +9,7 @@
 #include <nori/common.h>
 
 NORI_NAMESPACE_BEGIN
+  static  bool first=true;
 
 /**
  * \brief Discrete probability distribution
@@ -83,6 +84,7 @@ public:
      */
     float normalize() {
         m_sum = m_cdf[m_cdf.size()-1];
+        std::cout<<"m_sum"<<m_sum;
         if (m_sum > 0) {
             m_normalization = 1.0f / m_sum;
             for (size_t i=1; i<m_cdf.size(); ++i) 
@@ -92,6 +94,7 @@ public:
         } else {
             m_normalization = 0.0f;
         }
+        cout<<"cdfval"<<m_cdf[0]<<" "<<m_cdf[1]<<" "<<m_cdf[2]<<endl;
         return m_sum;
     }
 
@@ -121,6 +124,9 @@ public:
      *     The discrete index associated with the sample
      */
     size_t sample(float sampleValue, float &pdf) const {
+        if(first){
+            first=false;
+        }
         size_t index = sample(sampleValue);
         pdf = operator[](index);
         return index;

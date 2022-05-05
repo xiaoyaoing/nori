@@ -110,6 +110,10 @@ public:
         m_meshes.sampleLight(record,sampler);
     }
 
+    float EmitterPdf() const ;
+
+    float getEmitterPdf();
+
 private:
     MeshSet m_meshes;
     Integrator *m_integrator = nullptr;

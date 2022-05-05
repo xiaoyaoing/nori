@@ -108,6 +108,13 @@ std::string Scene::toString() const {
     );
 }
 
+    float Scene::EmitterPdf() const{
+
+        return  1/m_meshes.allSurfaceArea;
+    }
+
+
+
 
 
 //void Scene::sampleEmitter(emitterRecord &record, Sampler *sampler) const {

@@ -79,25 +79,66 @@ float Warp::squareToCosineHemispherePdf(const Vector3f &v) {
     return v[2] >=0 ? v.z() * INV_PI : .0f;
     throw NoriException("Warp::squareToCosineHemispherePdf() is not yet implemented!");
 }
-
+//
 Vector3f Warp::squareToBeckmann(const Point2f &sample, float alpha) {
     auto tan2theta= -alpha*alpha*log( sample.x() );
     auto cosTheta=sqrt(1/(1+tan2theta));
     auto sinTheta= sqrt(1-cosTheta*cosTheta);
     auto phi=sample.y() * 2 * M_PI;
-    return (sinTheta*cos(phi), sinTheta*sin(phi),cosTheta);
+    Vector3f t1= Vector3f(sinTheta*cos(phi), sinTheta*sin(phi),cosTheta);
+     return t1;
 //    throw NoriException("Warp::squareToBeckmann() is not yet implemented!");
 }
-
+//
 float Warp::squareToBeckmannPdf(const Vector3f &m, float alpha) {
-    if(m.z()<0)
+    if(m.z()<=0)
         return 0.0f;
     auto cosTheta=m.z();
     auto sinTheta=sqrt(1-cosTheta*cosTheta);
     auto tan2Theta=(sinTheta* sinTheta)/(cosTheta*cosTheta);
-    return INV_PI * exp(-tan2Theta/(alpha*alpha))  / (alpha*alpha*pow(cosTheta,3));
+    float azimuthal =   INV_PI;
+    float longitudinal = exp(-tan2Theta/(alpha*alpha))  / (alpha*alpha*pow(cosTheta,3));
+    return azimuthal * longitudinal;
+  }
+////    throw NoriException("Warp::squareToBeckmannPdf() is not yet implemented!");
+//}
+//    Vector3f Warp::squareToBeckmann(const Point2f &sample, float alpha) {
+//        float phi = 2*M_PI*sample[0];
+//        float invAlpha2 = 1.f/alpha; invAlpha2 *= invAlpha2;
+//        float theta = acos(sqrt(1/(1-alpha*alpha*log(sample[1]))));
+//
+//        return Vector3f(sin(theta)*cos(phi), sin(theta)*sin(phi), cos(theta));
+//    }
 
-//    throw NoriException("Warp::squareToBeckmannPdf() is not yet implemented!");
-}
-
+//    float Warp::squareToBeckmannPdf(const Vector3f &m, float alpha) {
+//
+//
+//
+//           if(m.z()<=0)
+//        return 0.0f;
+//        if(Frame::cosTheta(m) <= 0)
+//            return 0.f;
+//            auto cosTheta=m.z();
+//            auto sinTheta=sqrt(1-cosTheta*cosTheta);
+//            auto tan2Theta=(sinTheta* sinTheta)/(cosTheta*cosTheta);
+//          auto t1  =INV_PI ;
+//          float t3=exp(-tan2Theta/(alpha*alpha))  / (alpha*alpha*pow(cosTheta,3));
+//            t1*=t3;
+//            return t1;
+//         cosTheta = Frame::cosTheta(m);
+//        float tanTheta = Frame::tanTheta(m);
+//
+//        if(cosTheta <= 0)
+//            return 0.f;
+//
+//        float azimuthal =   INV_PI;
+//        auto tan2Theta2=-tanTheta*tanTheta;
+//        float longitudinal = exp(tan2Theta2/(alpha*alpha)) /(alpha*alpha*pow(cosTheta,3));
+//
+//        auto t2= azimuthal * longitudinal;
+//        if(t1!=t2){
+//            t2=t1;
+//        }
+//        return t1;
+//    }
 NORI_NAMESPACE_END

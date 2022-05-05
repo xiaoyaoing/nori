@@ -60,8 +60,8 @@ public:
             }
             else
             {
-              auto mol=3.535*b+2.181*b*b;
-              auto den=1+2.276*b+2.577*b*b;
+              auto mol=3.535f*b+2.181f*b*b;
+              auto den=1+2.276f*b+2.577f*b*b;
               return float(mol/den);
             }
         };
@@ -80,6 +80,10 @@ public:
 
     /// Evaluate the sampling density of \ref sample() wrt. solid angles
     float pdf(const BSDFQueryRecord &bRec) const {
+        if (bRec.measure != ESolidAngle
+            || Frame::cosTheta(bRec.wi) <= 0.0f
+            || Frame::cosTheta(bRec.wo) <= 0.0f)
+            return 0.0f;
         Vector3f wh = (bRec.wi + bRec.wo); wh.normalize();
         float jacobian = 1.f/(4*(wh.dot(bRec.wo)));
         float a = m_ks*Warp::squareToBeckmannPdf(wh, m_alpha) * jacobian;
@@ -105,7 +109,10 @@ public:
         Color3f m_eval = eval(bRec);
         if(m_eval.isZero())
             return {0.f};
-        return m_eval * Frame::cosTheta(bRec.wo) / pdf(bRec);
+        float pdfVal= pdf(bRec);
+        if(pdfVal==0.f)
+            return {0.f};
+        return m_eval * Frame::cosTheta(bRec.wo) /pdfVal;
 //    	throw NoriException("MicrofacetBRDF::sample(): not implemented!");
 
         // Note: Once you have implemented the part that computes the scattered

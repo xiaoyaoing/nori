@@ -123,7 +123,7 @@ class ReconstructionFilter;
 class Intersection;
 class Sampler;
 class Scene;
-class emitterRecord;
+struct emitterRecord;
 
 /// Import cout, cerr, endl for debugging purposes
 using std::cout;

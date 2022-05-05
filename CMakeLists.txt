@@ -93,6 +93,9 @@ add_executable(nori
   src/ao.cpp
   src/area.cpp
   src/whited.cpp
+  src/path_mats.cpp
+  src/path_mis.cpp
+  src/path_ems.cpp
 )
 
 add_definitions(${NANOGUI_EXTRA_DEFS})
@@ -107,6 +110,8 @@ add_executable(warptest
   src/proplist.cpp
   src/common.cpp
 )
+
+
 
 if (WIN32)
   target_link_libraries(nori tbb_static pugixml IlmImf nanogui ${NANOGUI_EXTRA_LIBS} zlibstatic)
