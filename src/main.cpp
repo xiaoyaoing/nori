@@ -61,6 +61,9 @@ static void render(Scene *scene, const std::string &filename) {
     Vector2i outputSize = camera->getOutputSize();
     scene->getIntegrator()->preprocess(scene);
 
+
+
+
     /* Create a block generator (i.e. a work scheduler) */
     BlockGenerator blockGenerator(outputSize, NORI_BLOCK_SIZE);
 
@@ -164,8 +167,8 @@ int main(int argc, char **argv) {
     argv[1]="../scenes/pa4/motto/motto-diffuse.xml";
     argv[1]="../scenes/pa4/cbox/cbox-whitted.xml";
     argv[1]="../scenes/pa5/cbox/cbox_mis.xml";
-//    argv[1]="../scenes/pa5/tests/test-furnace.xml";
-    argv[1]="../scenes/pa5/veach_mi/veach_mis.xml";
+    argv[1]="../scenes/pa4/tests/test-mesh-furnace.xml";
+//    argv[1]="../scenes/pa5/veach_mi/veach_mis.xml";
     for (int i = 1; i < argc; ++i) {
         std::string token(argv[i]);
         if (token == "-t" || token == "--threads") {

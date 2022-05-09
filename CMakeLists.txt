@@ -71,7 +71,7 @@ add_executable(nori
   src/accel.cpp
   src/chi2test.cpp
   src/common.cpp
-  src/diffuse.cpp
+        src/matrials/diffuse.cpp
   src/gui.cpp
   src/independent.cpp
   src/main.cpp
@@ -79,23 +79,24 @@ add_executable(nori
   src/obj.cpp
   src/object.cpp
   src/parser.cpp
-  src/perspective.cpp
+        src/cameras/perspective.cpp
   src/proplist.cpp
   src/rfilter.cpp
   src/scene.cpp
   src/ttest.cpp
   src/warp.cpp
-  src/microfacet.cpp
-  src/mirror.cpp
-  src/dielectric.cpp
-  src/normals.cpp
-  src/simple.cpp
-  src/ao.cpp
-  src/area.cpp
-  src/whited.cpp
-  src/path_mats.cpp
-  src/path_mis.cpp
-  src/path_ems.cpp
+        src/matrials/microfacet.cpp
+        src/matrials/mirror.cpp
+        src/matrials/dielectric.cpp
+        src/integrator/normals.cpp
+        src/integrator/simple.cpp
+        src/integrator/ao.cpp
+        src/lights/area.cpp
+        src/integrator/whited.cpp
+        src/integrator/path_mats.cpp
+        src/integrator/path_mis.cpp
+        src/integrator/path_ems.cpp
+        src/integrator/photo_map.cpp
 )
 
 add_definitions(${NANOGUI_EXTRA_DEFS})
@@ -105,7 +106,7 @@ add_executable(warptest
   include/nori/warp.h
   src/warp.cpp
   src/warptest.cpp
-  src/microfacet.cpp
+        src/matrials/microfacet.cpp
   src/object.cpp
   src/proplist.cpp
   src/common.cpp

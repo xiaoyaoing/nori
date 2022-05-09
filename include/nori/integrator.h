@@ -46,6 +46,8 @@ public:
      * provided by this instance
      * */
     EClassType getClassType() const { return EIntegrator; }
+
+    bool usePhotoMap=false;
 };
 
 NORI_NAMESPACE_END
