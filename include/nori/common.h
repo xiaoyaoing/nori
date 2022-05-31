@@ -111,7 +111,7 @@ class BlockGenerator;
 class Camera;
 class ImageBlock;
 class Integrator;
-class KDTree;
+//class KdTree;
 class Emitter;
 struct EmitterQueryRecord;
 class Mesh;
@@ -124,6 +124,7 @@ class Intersection;
 class Sampler;
 class Scene;
 struct emitterRecord;
+struct Photon;
 
 /// Import cout, cerr, endl for debugging purposes
 using std::cout;

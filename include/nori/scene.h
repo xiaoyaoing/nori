@@ -6,7 +6,7 @@
 
 #pragma once
 
-#include <nori/accel.h>
+#include "../../src/hierarchy/accel.h"
 #include "emitter.h"
 
 NORI_NAMESPACE_BEGIN
@@ -113,6 +113,14 @@ public:
     float EmitterPdf() const ;
 
     float getEmitterPdf();
+
+
+    std::vector<Emitter *> lights;
+
+//    std::vector<Emitter * > getLights(){
+//        return m_meshes.emitterPtr;
+//    };
+
 
 private:
     MeshSet m_meshes;

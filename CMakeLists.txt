@@ -1,6 +1,8 @@
 cmake_minimum_required (VERSION 3.2)
 project(nori)
 
+set(CMAKE_CXX_STANDARD 14)
+
 add_subdirectory(ext ext_build)
 
 include_directories(
@@ -33,18 +35,23 @@ include_directories(
   SYSTEM ${FILESYSTEM_INCLUDE_DIR}
   # STB Image Write
   SYSTEM ${STB_IMAGE_WRITE_INCLUDE_DIR}
+
+
+
 )
+
+
+
 
 # The following lines build the main executable. If you add a source
 # code file to Nori, be sure to include it in this list.
 add_executable(nori
-
   # Header files
   include/nori/bbox.h
   include/nori/bitmap.h
   include/nori/block.h
   include/nori/bsdf.h
-  include/nori/accel.h
+        src/hierarchy/accel.h
   include/nori/camera.h
   include/nori/color.h
   include/nori/common.h
@@ -68,7 +75,7 @@ add_executable(nori
   # Source code files
   src/bitmap.cpp
   src/block.cpp
-  src/accel.cpp
+        src/hierarchy/accel.cpp
   src/chi2test.cpp
   src/common.cpp
         src/matrials/diffuse.cpp
@@ -97,7 +104,34 @@ add_executable(nori
         src/integrator/path_mis.cpp
         src/integrator/path_ems.cpp
         src/integrator/photo_map.cpp
+        include/nori/kdTree.h
 )
+
+
+
+include(FetchContent)
+FetchContent_Declare(
+        googletest
+        URL https://github.com/google/googletest/archive/609281088cfefc76f9d0ce82e1ff6c30cc3591e5.zip
+)
+# For Windows: Prevent overriding the parent project's compiler/linker settings
+set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
+FetchContent_MakeAvailable(googletest)
+
+enable_testing()
+
+add_executable(
+        hello_test
+        tests/hello_test.cc
+)
+target_link_libraries(
+        hello_test
+        gtest_main
+)
+
+include(GoogleTest)
+gtest_discover_tests(hello_test)
+
 
 add_definitions(${NANOGUI_EXTRA_DEFS})
 

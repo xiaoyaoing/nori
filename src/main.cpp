@@ -159,15 +159,15 @@ int main(int argc, char **argv) {
 
     std::string sceneName = "";
     std::string exrName = "";
-
+//    return 1;
     argv=new char*[2];
     argc=2;
     argv[1]="../scenes/pa1/bunny.xml";
     argv[1]="../scenes/pa4/tests/test-mesh.xml";
     argv[1]="../scenes/pa4/motto/motto-diffuse.xml";
     argv[1]="../scenes/pa4/cbox/cbox-whitted.xml";
-    argv[1]="../scenes/pa5/cbox/cbox_mis.xml";
-    argv[1]="../scenes/pa4/tests/test-mesh-furnace.xml";
+    argv[1]="../scenes/myScenes/cbox/cbox_pm.xml";
+//    argv[1]="../scenes/pa4/tests/test-mesh-furnace.xml";
 //    argv[1]="../scenes/pa5/veach_mi/veach_mis.xml";
     for (int i = 1; i < argc; ++i) {
         std::string token(argv[i]);

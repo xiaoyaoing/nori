@@ -151,6 +151,17 @@ public:
     }
 };
 
+
+inline  Vector3f  hmin(Vector3f l,Vector3f r){
+    return {std::min(l.x(),r.x()),std::min(l.y(),r.y()),std::min(l.z(),r.z())  };
+}
+
+inline  Vector3f  hmax(Vector3f l,Vector3f r){
+    return {std::max(l.x(),r.x()),std::max(l.y(),r.y()),std::max(l.z(),r.z())  };
+}
+
+
+
 /// Complete the set {a} to an orthonormal base
 extern void coordinateSystem(const Vector3f &a, Vector3f &b, Vector3f &c);
 

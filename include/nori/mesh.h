@@ -66,7 +66,12 @@ struct Intersection {
 class Mesh : public NoriObject {
 public:
 
-    void sample(emitterRecord & rec, Sampler * sampler,float weight);
+    void sample(emitterRecord & rec, Sampler * sampler,float  weight);
+
+
+    void samplePos(Vector3f & pos,Sampler * sampler,float & pdf);
+
+
 
     /// Release all memory
     virtual ~Mesh();
@@ -180,14 +185,14 @@ protected:
 };
 
     struct MeshSet {
-        std::unique_ptr<std::vector<Mesh *>> meshesPtr {nullptr};
-        std::unique_ptr<std::vector<Mesh *>> emitterPtr {nullptr};
+        std::vector<Mesh * > meshesPtr ;
+        std::vector<Mesh * > emitterPtr ;
         std::vector<uint32_t> count;
         DiscretePDF emitterPdf;
+        MeshSet()
+        {
 
-        MeshSet(): meshesPtr(std::make_unique<std::vector<Mesh *>>()),
-                   emitterPtr(std::make_unique<std::vector<Mesh *>>())
-        { }
+        }
 
         //MeshSet(std::vector<Mesh> &_meshes) {
         //    meshesPtr = std::make_unique<std::vector<Mesh>>(_meshes);
@@ -218,7 +223,7 @@ protected:
 
         Mesh* getMesh(uint32_t idx) const {
             uint32_t meshIdx = getTri(idx).first;
-            return (*meshesPtr)[meshIdx];
+            return meshesPtr[meshIdx];
         }
 
         BoundingBox3f getBoundingBox(uint32_t idx) const;

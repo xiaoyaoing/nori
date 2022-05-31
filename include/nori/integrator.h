@@ -41,6 +41,7 @@ public:
      */
     virtual Color3f Li(const Scene *scene, Sampler *sampler, const Ray3f &ray,int depth=0) const = 0;
 
+
     /**
      * \brief Return the type of object (i.e. Mesh/BSDF/etc.) 
      * provided by this instance
@@ -49,5 +50,8 @@ public:
 
     bool usePhotoMap=false;
 };
+
+
+
 
 NORI_NAMESPACE_END

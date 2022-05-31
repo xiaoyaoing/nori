@@ -14,6 +14,7 @@
 NORI_NAMESPACE_BEGIN
 
 Scene::Scene(const PropertyList &) {
+
     m_accel = new Accel();
     m_accel->m_MeshSet=&m_meshes;
 }
@@ -38,6 +39,12 @@ void Scene::activate() {
         m_sampler = static_cast<Sampler*>(
             NoriObjectFactory::createInstance("independent", PropertyList()));
     }
+
+    for(auto light_mesh:m_meshes.emitterPtr){
+        lights.push_back(light_mesh->getEmitter());
+    }
+
+//    this->lightsm_meshes.emitterPtr
 
     cout << endl;
     cout << "Configuration: " << toString() << endl;
@@ -86,9 +93,9 @@ void Scene::addChild(NoriObject *obj) {
 
 std::string Scene::toString() const {
     std::string meshes;
-    for (size_t i=0; i<m_meshes.meshesPtr->size(); ++i) {
-        meshes += std::string("  ") + indent( (*m_meshes.meshesPtr)[i]->toString(), 2);
-        if (i + 1 < m_meshes.meshesPtr->size())
+    for (size_t i=0; i<m_meshes.meshesPtr.size(); ++i) {
+        meshes += std::string("  ") + indent( (m_meshes.meshesPtr)[i]->toString(), 2);
+        if (i + 1 < m_meshes.meshesPtr.size())
             meshes += ",";
         meshes += "\n";
     }

@@ -138,7 +138,7 @@ std::string Mesh::toString() const {
     );
 }
 
-    void Mesh::sample(emitterRecord & rec, Sampler * sampler,float weight) {
+    void Mesh::sample(emitterRecord & rec, Sampler * sampler,float   weight) {
         uint32_t index=dPdf.sample(sampler->next1D());
         uint32_t i0 = m_F(0, index), i1 = m_F(1, index), i2 = m_F(2, index);
         const Point3f p0 = m_V.col(i0), p1 = m_V.col(i1), p2 = m_V.col(i2);
@@ -154,14 +154,18 @@ std::string Mesh::toString() const {
         else{
             rec.normal=((p1-p0).cross(p2-p0)).normalized();
         }
-//
-//        BSDFQueryRecord bRec{rec.wi};
-//        bRec.wo =rec.its->shFrame.toLocal((rec.pos-rec.its->p).normalized());
-//        bRec.measure = ESolidAngle;
 
-//        rec.pdfVal= getEmitter()->pdf(bRec,weight);
-
+        rec.pdfVal= weight * (1/allSurfaceArea);
         rec.emi=m_emitter;
+    }
+
+    void Mesh::samplePos(Vector3f &pos,  Sampler * sampler,float &pdf) {
+        uint32_t index=dPdf.sample(sampler->next1D());
+        uint32_t i0 = m_F(0, index), i1 = m_F(1, index), i2 = m_F(2, index);
+        const Point3f p0 = m_V.col(i0), p1 = m_V.col(i1), p2 = m_V.col(i2);
+
+        auto bary=sampler->next2D();
+        float u=1- sqrt(1-bary.x()),v=bary.y() * sqrt(1-bary.x());
     }
 
     std::string Intersection::toString() const {
@@ -188,25 +192,25 @@ std::string Mesh::toString() const {
 
 bool MeshSet::rayIntersect(uint32_t index, const nori::Ray3f &ray, float &u, float &v, float &t) const {
     auto tri= getTri(index);
-    return meshesPtr->operator[](tri.first)->rayIntersect(tri.second,ray,u,v,t);
+    return meshesPtr[tri.first]->rayIntersect(tri.second,ray,u,v,t);
 }
 
 
 BoundingBox3f MeshSet::getBoundingBox(uint32_t idx) const {
     auto tri= getTri(idx);
-    return meshesPtr->operator[](tri.first)->getBoundingBox(tri.second);
+    return meshesPtr[tri.first]->getBoundingBox(tri.second);
 }
 
     void MeshSet::addMesh(Mesh *mesh) {
         {
-            meshesPtr->emplace_back(mesh);
+            meshesPtr.emplace_back(mesh);
             if (count.empty())
                 count.emplace_back(mesh->getTriangleCount());
             else count.emplace_back(mesh->getTriangleCount() + count.back());
             if(mesh->isEmitter())
             {
                 mesh->getEmitter()->setMesh(mesh);
-                emitterPtr->emplace_back(mesh);
+                emitterPtr.emplace_back(mesh);
                 emitterPdf.append(mesh->getAllSurfaceArea());
             }
         }
@@ -215,8 +219,9 @@ BoundingBox3f MeshSet::getBoundingBox(uint32_t idx) const {
 void MeshSet::sampleLight(emitterRecord & eRec,Sampler * sampler) const {
     float pdfVal1;
     int idx=emitterPdf.sample(sampler->next1D(),pdfVal1);
+    emitterPtr[idx]->sample(eRec,sampler,pdfVal1);
     eRec.pdfVal=1/this->allSurfaceArea;
-    (*emitterPtr)[idx]->sample(eRec,sampler,pdfVal1);
+
 
 }
 

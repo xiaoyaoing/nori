@@ -12,6 +12,35 @@
 
 NORI_NAMESPACE_BEGIN
 
+
+    struct emitterRecord{
+        Vector3f wi;
+        Vector3f  normal;
+        Vector3f  pos;
+        float pdfVal;
+        Emitter * emi;
+        Intersection * its;
+    };
+
+    struct Photon{  //光子
+        Vector3f position;
+        Vector3f  direction;
+        Color3f   power;
+        int idx=0;
+        Photon(Vector3f position,Vector3f direction,Color3f power)
+        {
+            this->position=position;
+            this->direction=direction;
+            this->power=power;
+        }
+
+        Photon(){}
+
+
+
+    };
+
+
 /**
  * \brief Superclass of all emitters
  */
@@ -26,26 +55,32 @@ public:
 
     virtual Color3f eval(emitterRecord eRec) const=0;
     virtual Color3f eval(Intersection its) const=0;
+
+    Mesh * getShape(){
+        return mesh;
+    }
+
     void setMesh(Mesh * mesh){
         this->mesh=mesh;
     }
 
 //    virtual  float pdf(nori::BSDFQueryRecord record, float d)=0;
 
-protected:
+
+
+
+       virtual Photon samplePhoton(Sampler *pSampler) {
+           throw NoriException("Abstract sample Photon is not yet implemented!");
+        }
+
+    protected:
     Mesh * mesh;
-};
+    };
 
-struct emitterRecord{
-    Vector3f wi;
-    Vector3f  normal;
-    Vector3f  pos;
-    float pdfVal;
-    Emitter * emi;
-    Intersection * its;
-};
 
-//struct EmitterQueryRecord{
+//struct EmitterQueryRecord{struct Photon{
+//
+//};
 //
 //    Vector3f wi;
 //

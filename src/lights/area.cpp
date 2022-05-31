@@ -4,6 +4,7 @@
 
 
 #include "nori/emitter.h"
+#include "nori/warp.h"
 NORI_NAMESPACE_BEGIN
 class AreaLight : public Emitter{
 
@@ -25,6 +26,25 @@ public:
     AreaLight(const PropertyList list) {
         this->radiance=list.getColor("radiance");
     }
+
+
+    Photon samplePhoton(Sampler * sampler) override {
+         emitterRecord eRec;
+         mesh->sample(eRec,sampler,1.f);
+
+//         while(Warp::squareToUniformSphere(sampler->next2D()). )
+        auto dir= Frame(eRec.normal).toWorld(Warp::squareToUniformSphere(sampler->next2D())).normalized();
+
+        Photon photon(eRec.pos,
+                       dir,radiance * eRec.normal.dot(dir));
+
+
+        return photon;
+//        auto
+//        return Emitter::samplePhoton(pSampler);
+    }
+
+
 
 //    float pdf(BSDFQueryRecord record, float d) override {
 //
