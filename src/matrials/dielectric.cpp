@@ -13,6 +13,8 @@ NORI_NAMESPACE_BEGIN
 class Dielectric : public BSDF {
 public:
     Dielectric(const PropertyList &propList) {
+        name=propList.getString("mtlname","");
+
         /* Interior IOR (default: BK7 borosilicate optical glass) */
         m_intIOR = propList.getFloat("intIOR", 1.5046f);
 
@@ -89,6 +91,8 @@ private:
                 cosThetaI > 0 ? -cosThetaT : cosThetaT
         };
     }
+
+
     float m_intIOR, m_extIOR;
 };
 

@@ -40,12 +40,14 @@ public:
         VertexMap vertexMap;
 
         std::string line_str;
+        std::string mtlname;
+        bool firstO =true ;
+        bool firstM = true;
         while (std::getline(is, line_str)) {
             std::istringstream line(line_str);
 
             std::string prefix;
             line >> prefix;
-
             if (prefix == "v") {
                 Point3f p;
                 line >> p.x() >> p.y() >> p.z();
@@ -90,6 +92,84 @@ public:
                     }
                 }
             }
+            else if(prefix=="usemtl"){
+                if(firstM){
+                    firstM =false ;
+                    line>>mtlname;
+                }
+
+                else {  //
+                    m_F.resize(3, indices.size()/3);
+                    memcpy(m_F.data(), indices.data(), sizeof(uint32_t)*indices.size());
+
+                    m_V.resize(3, vertices.size());
+                    for (uint32_t i=0; i<vertices.size(); ++i)
+                        m_V.col(i) = positions.at(vertices[i].p-1);
+
+                    if (!normals.empty()) {
+                        m_N.resize(3, vertices.size());
+                        for (uint32_t i=0; i<vertices.size(); ++i)
+                        {     if(vertices[i].n<=normals.size())
+                                m_N.col(i) = normals.at(vertices[i].n-1);}
+                    }
+
+                    if (!texcoords.empty()) {
+                        m_UV.resize(2, vertices.size());
+                        for (uint32_t i=0; i<vertices.size(); ++i)
+                        {
+                            if(vertices[i].uv<=texcoords.size())
+                            {
+                                Vector3f  n = normals.at(vertices[i].n-1);
+                                m_N.col(i) = normals.at(vertices[i].n-1);
+                            }
+                        }
+                    }
+                    meshs.emplace_back(new Mesh(m_F,m_V,m_N,m_UV,mtlname,m_bbox));
+                    indices.resize(0);
+                    vertices.resize(0);
+                    m_bbox=BoundingBox3f() ;
+                    line >> mtlname;
+                }
+
+            }
+            else if(prefix=="o"){
+                {
+                    if(firstO){
+                        firstO=false;
+                        continue;
+                    }
+                    firstM= true;
+                    m_F.resize(3, indices.size()/3);
+                    memcpy(m_F.data(), indices.data(), sizeof(uint32_t)*indices.size());
+
+                    m_V.resize(3, vertices.size());
+                    for (uint32_t i=0; i<vertices.size(); ++i)
+                        m_V.col(i) = positions.at(vertices[i].p-1);
+
+                    if (!normals.empty()) {
+                        m_N.resize(3, vertices.size());
+                        for (uint32_t i=0; i<vertices.size(); ++i)
+                        {     if(vertices[i].n<=normals.size())
+                            {  Vector3f  n = normals.at(vertices[i].n-1);
+                            m_N.col(i) = normals.at(vertices[i].n-1);
+                            }
+                        }
+                    }
+
+                    if (!texcoords.empty()) {
+                        m_UV.resize(2, vertices.size());
+                        for (uint32_t i=0; i<vertices.size(); ++i)
+                        {
+                            if(vertices[i].uv<=texcoords.size())
+                                m_UV.col(i) = texcoords.at(vertices[i].uv-1);}
+                    }
+
+                    meshs.emplace_back(new Mesh(m_F,m_V,m_N,m_UV,mtlname,m_bbox));
+                    vertices.resize(0);
+                    indices.resize(0);
+                    m_bbox=BoundingBox3f() ;
+            }
+        }
         }
 
         m_F.resize(3, indices.size()/3);
@@ -99,24 +179,26 @@ public:
         for (uint32_t i=0; i<vertices.size(); ++i)
             m_V.col(i) = positions.at(vertices[i].p-1);
 
-        if (!normals.empty()) {
+       if (!normals.empty()) {
             m_N.resize(3, vertices.size());
             for (uint32_t i=0; i<vertices.size(); ++i)
-                m_N.col(i) = normals.at(vertices[i].n-1);
+            {     if(vertices[i].n<=normals.size())
+                {  Vector3f  n = normals.at(vertices[i].n-1);
+                    m_N.col(i) = normals.at(vertices[i].n-1);
+                }
+            }
         }
 
         if (!texcoords.empty()) {
             m_UV.resize(2, vertices.size());
-            for (uint32_t i=0; i<vertices.size(); ++i)
+            for (uint32_t i=0; i<=vertices.size(); ++i)
+            {
+                if(vertices[i].uv<texcoords.size())
                 m_UV.col(i) = texcoords.at(vertices[i].uv-1);
+            }
         }
 
-        m_name = filename.str();
-        cout << "done. (V=" << m_V.cols() << ", F=" << m_F.cols() << ", took "
-             << timer.elapsedString() << " and "
-             << memString(m_F.size() * sizeof(uint32_t) +
-                          sizeof(float) * (m_V.size() + m_N.size() + m_UV.size()))
-             << ")" << endl;
+        meshs.emplace_back(new Mesh(m_F,m_V,m_N,m_UV,mtlname,m_bbox));
     }
 
 protected:
@@ -135,6 +217,8 @@ protected:
                 throw NoriException("Invalid vertex data: \"%s\"", string);
 
             p = toUInt(tokens[0]);
+
+
 
             if (tokens.size() >= 2 && !tokens[1].empty())
                 uv = toUInt(tokens[1]);

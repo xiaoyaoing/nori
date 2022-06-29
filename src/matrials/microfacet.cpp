@@ -17,6 +17,8 @@ static void  reflect(const Vector3f & wi,const Vector3f & n,Vector3f & wo){
 class Microfacet : public BSDF {
 public:
     Microfacet(const PropertyList &propList) {
+        name=propList.getString("mtlname","");
+
         /* RMS surface roughness */
         m_alpha = propList.getFloat("alpha", 0.1f);
 
@@ -75,7 +77,6 @@ public:
         return kd + ks;
 
 
-//    	throw NoriException("MicrofacetBRDF::eval(): not implemented!");
     }
 
     /// Evaluate the sampling density of \ref sample() wrt. solid angles

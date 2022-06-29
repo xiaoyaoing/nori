@@ -64,14 +64,15 @@ public:
         this->mesh=mesh;
     }
 
-//    virtual  float pdf(nori::BSDFQueryRecord record, float d)=0;
 
+    //sample ray from light
+    virtual Ray3f  sampleRay(Sampler * sampler,Color3f & power){
 
+    }
 
-
-       virtual Photon samplePhoton(Sampler *pSampler) {
+    virtual Photon samplePhoton(Sampler *pSampler) {
            throw NoriException("Abstract sample Photon is not yet implemented!");
-        }
+    }
 
     protected:
     Mesh * mesh;

@@ -87,7 +87,6 @@ Vector3f Warp::squareToBeckmann(const Point2f &sample, float alpha) {
     auto phi=sample.y() * 2 * M_PI;
     Vector3f t1= Vector3f(sinTheta*cos(phi), sinTheta*sin(phi),cosTheta);
      return t1;
-//    throw NoriException("Warp::squareToBeckmann() is not yet implemented!");
 }
 //
 float Warp::squareToBeckmannPdf(const Vector3f &m, float alpha) {

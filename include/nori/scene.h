@@ -114,12 +114,9 @@ public:
 
     float getEmitterPdf();
 
-
+    std::map<std::string,BSDF *> bsdfs;
     std::vector<Emitter *> lights;
 
-//    std::vector<Emitter * > getLights(){
-//        return m_meshes.emitterPtr;
-//    };
 
 
 private:

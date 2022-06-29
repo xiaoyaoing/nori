@@ -1,0 +1,78 @@
+<?xml version='1.0' encoding='utf-8'?>
+
+<scene>
+    <integrator type="path_mis">
+    </integrator>
+
+    <camera type="perspective">
+        <float name="fov" value="27.7856"/>
+        <transform name="toWorld">
+            <scale value="-1,1,1"/>
+            <lookat target="0, 0.893051, 4.41198" origin="0, 0.919769, 5.41159" up="0, 1, 0"/>
+        </transform>
+
+        <integer name="height" value="600"/>
+        <integer name="width" value="800"/>
+    </camera>
+
+    <sampler type="independent">
+        <integer name="sampleCount" value="256"/>
+    </sampler>
+
+    <bsdf type="diffuse">
+        <string name="mtlname" value="backWall.001"></string>
+        <color name="albedo" value="0.800000 0.800000 0.800000"> </color>
+    </bsdf>
+
+   <bsdf type="diffuse">
+       <string name="mtlname" value="ceiling.001"></string>
+       <color name="albedo" value="0.800000 0.800000 0.800000"> </color>
+   </bsdf>
+
+    <bsdf type="diffuse">
+        <string name="mtlname" value="floor.001"></string>
+        <color name="albedo" value="0.800000 0.800000 0.800000"> </color>
+    </bsdf>
+
+    <bsdf type="diffuse">
+        <string name="mtlname" value="leftWall.001"></string>
+        <color name="albedo" value="0.800000 0.050000 0.050000"> </color>
+    </bsdf>
+
+
+    <bsdf type="diffuse">
+        <string name="mtlname" value="light.001"></string>
+        <emitter type="area">
+            <color name="radiance" value="340000.000000 190000.000000 100000.000000"/>
+        </emitter>
+        <color name="albedo" value="0.800000 0.800000 0.8000000"> </color>
+    </bsdf>
+
+    <bsdf type="diffuse">
+        <string name="mtlname" value="rightWall.001"></string>
+        <color name="albedo" value="0.050000 0.800000 0.050000"> </color>
+    </bsdf>
+
+
+    <bsdf type="diffuse">
+        <string name="mtlname" value="shortBox.001"></string>
+        <color name="albedo" value="0.800000 0.800000 0.800000"> </color>
+    </bsdf>
+
+
+    <bsdf type="diffuse">
+        <string name="mtlname" value="tallBox.001"></string>
+        <color name="albedo" value="0.800000 0.800000 0.800000"> </color>
+    </bsdf>
+
+
+    <bsdf type="dielectric">
+        <string name="mtlname" value="water"/>
+        <float  name="extIDR" value="1.8"/>
+    </bsdf>
+
+
+    <mesh type="obj">
+        <string name="filename" value="meshs/cornellbox-water2.obj"/>
+    </mesh>
+</scene>

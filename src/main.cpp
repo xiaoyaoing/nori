@@ -48,6 +48,7 @@ static void renderBlock(const Scene *scene, Sampler *sampler, ImageBlock &block)
                 /* Compute the incident radiance */
                 value *= integrator->Li(scene, sampler, ray);
 
+
                 /* Store in the image block */
                 block.put(pixelSample, value);
             }
@@ -80,6 +81,8 @@ static void render(Scene *scene, const std::string &filename) {
 
     /* Do the following in parallel and asynchronously */
     std::thread render_thread([&] {
+        std::cout<<"threadCount "<<threadCount;
+        threadCount=4;
         tbb::task_scheduler_init init(threadCount);
 
         cout << "Rendering .. ";
@@ -162,13 +165,10 @@ int main(int argc, char **argv) {
 //    return 1;
     argv=new char*[2];
     argc=2;
-    argv[1]="../scenes/pa1/bunny.xml";
-    argv[1]="../scenes/pa4/tests/test-mesh.xml";
-    argv[1]="../scenes/pa4/motto/motto-diffuse.xml";
-    argv[1]="../scenes/pa4/cbox/cbox-whitted.xml";
+
     argv[1]="../scenes/myScenes/cbox/cbox_pm.xml";
-//    argv[1]="../scenes/pa4/tests/test-mesh-furnace.xml";
-//    argv[1]="../scenes/pa5/veach_mi/veach_mis.xml";
+    argv[1]="../scenes/myScenes/cbox-water/cbox_water_pm.xml";
+    argv[1]="../scenes/pa5/cbox/cbox_mis.xml";
     for (int i = 1; i < argc; ++i) {
         std::string token(argv[i]);
         if (token == "-t" || token == "--threads") {
@@ -229,6 +229,9 @@ int main(int argc, char **argv) {
         try {
             Bitmap bitmap(exrName);
             ImageBlock block(Vector2i((int) bitmap.cols(), (int) bitmap.rows()), nullptr);
+
+
+
             block.fromBitmap(bitmap);
             nanogui::init();
             NoriScreen *screen = new NoriScreen(block);

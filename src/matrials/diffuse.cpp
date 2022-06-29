@@ -16,6 +16,7 @@ NORI_NAMESPACE_BEGIN
 class Diffuse : public BSDF {
 public:
     Diffuse(const PropertyList &propList) {
+        name=propList.getString("mtlname", "");
         m_albedo = propList.getColor("albedo", Color3f(0.5f));
     }
 
@@ -41,13 +42,6 @@ public:
             || Frame::cosTheta(bRec.wo) <= 0)
             return 0.0f;
 
-
-        /* Importance sampling density wrt. solid angles:
-           cos(theta) / pi.
-
-           Note that the directions in 'bRec' are in local coordinates,
-           so Frame::cosTheta() actually just returns the 'z' component.
-        */
         return INV_PI * Frame::cosTheta(bRec.wo);
     }
 
@@ -55,18 +49,10 @@ public:
     Color3f sample(BSDFQueryRecord &bRec, const Point2f &sample) const {
         if (Frame::cosTheta(bRec.wi) <= 0)
             return Color3f(0.0f);
-
         bRec.measure = ESolidAngle;
-
-        /* Warp a uniformly distributed sample on [0,1]^2
-           to a direction on a cosine-weighted hemisphere */
         bRec.wo = Warp::squareToCosineHemisphere(sample);
-
-        /* Relative index of refraction: no change */
         bRec.eta = 1.0f;
 
-        /* eval() / pdf() * cos(theta) = albedo. There
-           is no need to call these functions. */
         return m_albedo;
     }
 

@@ -96,10 +96,15 @@ NORI_NAMESPACE_BEGIN
                     float bsdfPdf=bsdf->pdf({its.toLocal(-ray.d),its.toLocal(lightDir),ESolidAngle});
                     lightPdf/=std::max(eRec.normal.dot(-lightDir), 0.0f) / (distance*distance); //面积分到立体角积分转换
                     if(!isinf(lightPdf))
-                    {L+= cosTheta1* cosTheta2 * radiance * f
+                    {   L+= cosTheta1* cosTheta2 * radiance * f
                         /(distance* distance)
                         /eRec.pdfVal *
-                            (lightPdf/(lightPdf+bsdfPdf));}
+                            (lightPdf/(lightPdf+bsdfPdf));
+                        if(L.x()<0){
+                          std::cout<<f<<" ";
+                        }
+                    }
+
 
                 }
             }

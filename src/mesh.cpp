@@ -13,7 +13,9 @@
 
 NORI_NAMESPACE_BEGIN
 
-Mesh::Mesh() { }
+Mesh::Mesh() {
+
+}
 
 Mesh::~Mesh() {
     delete m_bsdf;
@@ -21,6 +23,13 @@ Mesh::~Mesh() {
 }
 
 void Mesh::activate() {
+
+    if(meshs.size()>1){
+        for(Mesh * mesh:meshs)
+            mesh->activate();
+        return ;
+    }
+
     if (!m_bsdf) {
         /* If no material was assigned, instantiate a diffuse BRDF */
         m_bsdf = static_cast<BSDF *>(
@@ -30,10 +39,9 @@ void Mesh::activate() {
     {
     for(size_t i=0;i<getTriangleCount();i++){
         dPdf.append(this->surfaceArea(i));
-        }
-    this->allSurfaceArea=dPdf.normalize();}
-    if(this->isEmitter())
-    std::cout<<"allSurfaceArea"<<allSurfaceArea<<endl;
+     }
+    this->allSurfaceArea=dPdf.normalize();
+    }
 }
 
 float Mesh::surfaceArea(uint32_t index) const {
@@ -148,13 +156,15 @@ std::string Mesh::toString() const {
         rec.pos=p0*(1-u-v) + p1 * u + p2 * v;
 
         if(m_N.size()>0){
+            Vector3f  n1= m_N.col(i0);
+            Vector3f n2= m_N.col(i1);
+            Vector3f n3= m_N.col(i2);
             rec.normal=(1-u-v) * m_N.col(i0) + u* m_N.col(i1)+v* m_N.col(i2);
 
         }
         else{
             rec.normal=((p1-p0).cross(p2-p0)).normalized();
         }
-
         rec.pdfVal= weight * (1/allSurfaceArea);
         rec.emi=m_emitter;
     }
@@ -166,6 +176,11 @@ std::string Mesh::toString() const {
 
         auto bary=sampler->next2D();
         float u=1- sqrt(1-bary.x()),v=bary.y() * sqrt(1-bary.x());
+    }
+
+    void Mesh::setEmitter(Emitter *pEmitter) {
+        this->m_emitter=pEmitter;
+        activate();
     }
 
     std::string Intersection::toString() const {

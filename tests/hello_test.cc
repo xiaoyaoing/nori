@@ -26,16 +26,18 @@ TEST(kdTree,test1){
     Vector3f  pos(randomInt(0,1000), randomInt(0,1000), randomInt(0,1000));
 
     int k=20;
-    auto neigh=  kdTree->kNN(pos,k,photons);
+    auto neigh=  kdTree->kNN(pos,k);
 
     float minD = -1e10f;
     for(auto & i:neigh){
         auto d=(i->position-pos).squaredNorm();
-        minD= std::max(minD,(i->position-pos).squaredNorm() );
+        minD= std::max(minD,(i->position-pos).squaredNorm() ) ;
     }
 
     int count =0;
     for(auto i:photons){
+        int d=(int)(i.position-pos).squaredNorm();
+        std::cout<<(i.position-pos).squaredNorm();
         if( (i.position-pos).squaredNorm() <= minD  ){
             count ++;
         }

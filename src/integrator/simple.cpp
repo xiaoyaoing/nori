@@ -11,7 +11,7 @@ NORI_NAMESPACE_BEGIN
 
     public:
         SimpleIntegrator(const PropertyList &props) {
-            this->energy=props.getColor("energy");
+            this->energy=props.getColor("energy",Color3f(1,1,1));
             this->pos=props.getPoint("position");
             /* No parameters this time */
         }

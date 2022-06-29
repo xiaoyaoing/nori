@@ -28,20 +28,40 @@ public:
     }
 
 
+    Ray3f sampleRay(Sampler *sampler, Color3f &power) override {
+        emitterRecord eRec;
+        mesh->sample(eRec,sampler,1.f);
+        float lightPosPdf=eRec.pdfVal;
+
+        Vector3f  localDir=Warp::squareToCosineHemisphere(sampler->next2D());
+        Vector3f  dir= Frame(eRec.normal).toWorld(localDir).normalized();
+        float lightDirPdf=Warp::squareToCosineHemispherePdf(localDir);
+
+        float cos =eRec.normal .dot(dir);
+
+        power=radiance*cos/(lightPosPdf*lightDirPdf);
+        return {eRec.pos,dir};
+    }
+
     Photon samplePhoton(Sampler * sampler) override {
+
+
          emitterRecord eRec;
          mesh->sample(eRec,sampler,1.f);
+         float lightPosPdf=eRec.pdfVal;
 
-//         while(Warp::squareToUniformSphere(sampler->next2D()). )
-        auto dir= Frame(eRec.normal).toWorld(Warp::squareToUniformSphere(sampler->next2D())).normalized();
+         Vector3f  dir= Frame(eRec.normal).toWorld(Warp::squareToCosineHemisphere(sampler->next2D())).normalized();
+         float lightDirPdf=Warp::squareToCosineHemispherePdf(dir);
 
-        Photon photon(eRec.pos,
-                       dir,radiance * eRec.normal.dot(dir));
+         float cos =eRec.normal .dot(dir);
 
+         Photon photon(eRec.pos,
+                       dir,abs(radiance
+                       * cos / (lightPosPdf * lightDirPdf)
+                       ));
 
         return photon;
-//        auto
-//        return Emitter::samplePhoton(pSampler);
+
     }
 
 

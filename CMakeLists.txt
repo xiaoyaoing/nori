@@ -46,66 +46,69 @@ include_directories(
 # The following lines build the main executable. If you add a source
 # code file to Nori, be sure to include it in this list.
 add_executable(nori
-  # Header files
-  include/nori/bbox.h
-  include/nori/bitmap.h
-  include/nori/block.h
-  include/nori/bsdf.h
-        src/hierarchy/accel.h
-  include/nori/camera.h
-  include/nori/color.h
-  include/nori/common.h
-  include/nori/dpdf.h
-  include/nori/frame.h
-  include/nori/integrator.h
-  include/nori/emitter.h
-  include/nori/mesh.h
-  include/nori/object.h
-  include/nori/parser.h
-  include/nori/proplist.h
-  include/nori/ray.h
-  include/nori/rfilter.h
-  include/nori/sampler.h
-  include/nori/scene.h
-  include/nori/timer.h
-  include/nori/transform.h
-  include/nori/vector.h
-  include/nori/warp.h
+    # Header files
+    include/nori/bbox.h
+    include/nori/bitmap.h
+    include/nori/block.h
+    include/nori/bsdf.h
+          src/hierarchy/accel.h
+    include/nori/camera.h
+    include/nori/color.h
+    include/nori/common.h
+    include/nori/dpdf.h
+    include/nori/frame.h
+    include/nori/integrator.h
+    include/nori/emitter.h
+    include/nori/mesh.h
+    include/nori/object.h
+    include/nori/parser.h
+    include/nori/proplist.h
+    include/nori/ray.h
+    include/nori/rfilter.h
+    include/nori/sampler.h
+    include/nori/scene.h
+    include/nori/timer.h
+    include/nori/transform.h
+    include/nori/vector.h
+    include/nori/warp.h
 
-  # Source code files
-  src/bitmap.cpp
-  src/block.cpp
-        src/hierarchy/accel.cpp
-  src/chi2test.cpp
-  src/common.cpp
-        src/matrials/diffuse.cpp
-  src/gui.cpp
-  src/independent.cpp
-  src/main.cpp
-  src/mesh.cpp
-  src/obj.cpp
-  src/object.cpp
-  src/parser.cpp
-        src/cameras/perspective.cpp
-  src/proplist.cpp
-  src/rfilter.cpp
-  src/scene.cpp
-  src/ttest.cpp
-  src/warp.cpp
-        src/matrials/microfacet.cpp
-        src/matrials/mirror.cpp
-        src/matrials/dielectric.cpp
-        src/integrator/normals.cpp
-        src/integrator/simple.cpp
-        src/integrator/ao.cpp
-        src/lights/area.cpp
-        src/integrator/whited.cpp
-        src/integrator/path_mats.cpp
-        src/integrator/path_mis.cpp
-        src/integrator/path_ems.cpp
-        src/integrator/photo_map.cpp
-        include/nori/kdTree.h
-)
+    # Source code files
+    src/bitmap.cpp
+    src/block.cpp
+    src/hierarchy/accel.cpp
+    src/chi2test.cpp
+    src/common.cpp
+    src/matrials/diffuse.cpp
+    src/matrials/microfacet.cpp
+    src/matrials/mirror.cpp
+    src/matrials/dielectric.cpp
+    src/matrials/plastic.cpp
+    src/gui.cpp
+    src/independent.cpp
+    src/main.cpp
+    src/mesh.cpp
+    src/bsdf.cpp
+    src/obj.cpp
+        src/object.cpp
+    src/parser.cpp
+    src/cameras/perspective.cpp
+    src/proplist.cpp
+    src/rfilter.cpp
+    src/scene.cpp
+    src/ttest.cpp
+    src/warp.cpp
+
+    src/integrator/normals.cpp
+    src/integrator/simple.cpp
+    src/integrator/ao.cpp
+    src/lights/area.cpp
+    src/integrator/whited.cpp
+    src/integrator/path_mats.cpp
+    src/integrator/path_mis.cpp
+    src/integrator/path_ems.cpp
+    src/integrator/photo_map.cpp
+    include/nori/kdTree.h
+        )
 
 
 

@@ -98,6 +98,14 @@ public:
      * or not to store photons on a surface
      */
     virtual bool isDiffuse() const { return false; }
+
+    virtual void addChild(NoriObject * obj);
+
+
+
+    std::string name;
+    Emitter * m_emitter= nullptr ;
+
 };
 
 NORI_NAMESPACE_END

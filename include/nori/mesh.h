@@ -9,6 +9,8 @@
 #include <nori/object.h>
 #include <nori/frame.h>
 #include <nori/bbox.h>
+
+#include <utility>
 #include "dpdf.h"
 #include "emitter.h"
 
@@ -63,7 +65,7 @@ struct Intersection {
  * the specifics of how to create its contents (e.g. by loading from an
  * external file)
  */
-class Mesh : public NoriObject {
+class  Mesh : public NoriObject {
 public:
 
     void sample(emitterRecord & rec, Sampler * sampler,float  weight);
@@ -71,7 +73,7 @@ public:
 
     void samplePos(Vector3f & pos,Sampler * sampler,float & pdf);
 
-
+    Mesh();
 
     /// Release all memory
     virtual ~Mesh();
@@ -167,11 +169,27 @@ public:
         return allSurfaceArea;
     }
 
-protected:
-    /// Create an empty mesh
-    Mesh();
+    Mesh(MatrixXu   m_F, MatrixXf m_V,MatrixXf m_N,MatrixXf m_UV,std::string mtlname,BoundingBox3f bbox):
+            mtlname(std::move(mtlname)),m_V(std::move(m_V)),m_N(std::move(m_N)),
+            m_UV(std::move(m_UV)),m_F(std::move(m_F)),m_bbox(bbox)
+    {
+    };
+
+    std::string mtlname;
+    std::vector<Mesh *> meshs;
+    BSDF         *m_bsdf = nullptr;
+///< BSDF of the surface
+Emitter    *m_emitter = nullptr;
+
+    void setEmitter(Emitter *pEmitter);
 
 protected:
+    /// Create an empty mesh
+
+
+
+protected:
+    //multiple mesh in one obj file
     DiscretePDF  dPdf;                   ///Assignement 4.1
     float        allSurfaceArea;         /// surfaceArea
     std::string m_name;                  ///< Identifying name
@@ -179,8 +197,7 @@ protected:
     MatrixXf      m_N;                   ///< Vertex normals
     MatrixXf      m_UV;                  ///< Vertex texture coordinates
     MatrixXu      m_F;                   ///< Faces
-    BSDF         *m_bsdf = nullptr;      ///< BSDF of the surface
-    Emitter    *m_emitter = nullptr;     ///< Associated emitter, if any
+    ///< Associated emitter, if any
     BoundingBox3f m_bbox;                ///< Bounding box of the mesh
 };
 

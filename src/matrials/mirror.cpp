@@ -12,7 +12,10 @@ NORI_NAMESPACE_BEGIN
 /// Ideal mirror BRDF
 class Mirror : public BSDF {
 public:
-    Mirror(const PropertyList &) { }
+    Mirror(const PropertyList & propList) {
+        name=propList.getString("mtlname","");
+
+    }
 
     Color3f eval(const BSDFQueryRecord &) const {
         /* Discrete BRDFs always evaluate to zero in Nori */

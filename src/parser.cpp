@@ -46,6 +46,7 @@ NoriObject *loadFromXML(const std::string &filename) {
         /* Object classes */
         EScene                = NoriObject::EScene,
         EMesh                 = NoriObject::EMesh,
+        EMeshS                = NoriObject::EMeshs,
         EBSDF                 = NoriObject::EBSDF,
         EPhaseFunction        = NoriObject::EPhaseFunction,
         EEmitter            = NoriObject::EEmitter,
@@ -78,6 +79,7 @@ NoriObject *loadFromXML(const std::string &filename) {
     std::map<std::string, ETag> tags;
     tags["scene"]      = EScene;
     tags["mesh"]       = EMesh;
+    tags["meshs"]      = EMeshS;
     tags["bsdf"]       = EBSDF;
     tags["emitter"]  = EEmitter;
     tags["camera"]     = ECamera;
@@ -100,6 +102,7 @@ NoriObject *loadFromXML(const std::string &filename) {
     tags["rotate"]     = ERotate;
     tags["scale"]      = EScale;
     tags["lookat"]     = ELookAt;
+
 
     /* Helper function to check if attributes are fully specified */
     auto check_attributes = [&](const pugi::xml_node &node, std::set<std::string> attrs) {
@@ -139,6 +142,7 @@ NoriObject *loadFromXML(const std::string &filename) {
         /* Perform some safety checks to make sure that the XML tree really makes sense */
         bool hasParent            = parentTag != EInvalid;
         bool parentIsObject       = hasParent && parentTag < NoriObject::EClassTypeCount;
+
         bool currentIsObject      = tag < NoriObject::EClassTypeCount;
         bool parentIsTransform    = parentTag == ETransform;
         bool currentIsTransformOp = tag == ETranslate || tag == ERotate || tag == EScale || tag == ELookAt || tag == EMatrix;

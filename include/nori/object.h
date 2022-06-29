@@ -21,6 +21,7 @@ public:
     enum EClassType {
         EScene = 0,
         EMesh,
+        EMeshs,
         EBSDF,
         EPhaseFunction,
         EEmitter,

@@ -52,13 +52,30 @@ void Scene::activate() {
 }
 
 void Scene::addChild(NoriObject *obj) {
+    BSDF * bsdf ;
     switch (obj->getClassType()) {
         case EMesh: {
                 Mesh *mesh = static_cast<Mesh *>(obj);
-                m_accel->addMesh(mesh);
+              if(mesh->meshs.empty() || mesh->meshs.size()==1)
+              {
+                if(bsdfs.count(mesh->mtlname)){
+                    mesh->m_bsdf=bsdfs[mesh->mtlname];
+                    if(mesh->m_bsdf->m_emitter!= nullptr)
+                    {
+                        mesh->setEmitter(mesh->m_bsdf->m_emitter);
+                    }
+                }
+                  m_accel->addMesh(mesh) ;
+              }
+            else
+                for(auto  subMesh: mesh->meshs)  // mult mesh in one file
+                    {
+                        addChild(subMesh);
+                    }
+
             }
             break;
-        
+
         case EEmitter: {
                 //Emitter *emitter = static_cast<Emitter *>(obj);
                 /* TBD */
@@ -78,13 +95,15 @@ void Scene::addChild(NoriObject *obj) {
                 throw NoriException("There can only be one camera per scene!");
             m_camera = static_cast<Camera *>(obj);
             break;
-        
         case EIntegrator:
             if (m_integrator)
                 throw NoriException("There can only be one integrator per scene!");
             m_integrator = static_cast<Integrator *>(obj);
             break;
-
+        case EBSDF:
+            bsdf = static_cast<BSDF *>(obj);
+            bsdfs[bsdf->name] = bsdf;
+            break;
         default:
             throw NoriException("Scene::addChild(<%s>) is not supported!",
                 classTypeName(obj->getClassType()));
