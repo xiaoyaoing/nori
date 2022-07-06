@@ -3,6 +3,9 @@
 .DS_Store
 /scenes/pa3/ajax.obj
 /nori
+/cmake-build-debug
+/cmake-build-release
+/.idea
 /warptest
 /ext_build
 CMakeCache.txt
